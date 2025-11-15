@@ -83,10 +83,10 @@ export default function SignUpPage() {
 
 - setting up the sign up page first, going with basic sign up page.
 
-  - cd ~/speakUp/frontend/app/auth/signup and ran npm run dev and it is showing the rendered page - cool : ![rendered_page_signup](./documentation_images/rendered_page_signup_form.png)
+  - cd ~/speakUp/frontend/app/auth/signup and ran npm run dev and it is showing the rendered page - cool : ![rendered_page_signup](sample_images_for_documentation/rendered_page_signup_form.png)
 
 - setup login page, just modified some fields from signup page.
-  - tested: ![rendered_page_login](documentation_images/image.png)
+  - tested: ![rendered_page_login](sample_images_for_documentation/image.png)
 
 ### navigation bar setup
 
@@ -126,7 +126,12 @@ export function Navbar() {
 }
 ```
 
-- testing: ![img.png](navbar_test_initial.png)
+- testing: ![img.png](sample_images_for_documentation/navbar_test_initial.png)
+
+### once login/signup is done, a chat page should be shown
+
+- kindly refer to [frontend/components/chat-navbar.tsx](frontend/components/chat-navbar.tsx), and all the folders and files inside app > app to check how our special chat navigator bar is setup.
+- testing screenshots: ![img.png](sample_images_for_documentation/chat_navbar_once_logged_in.png)
 
 > end: prajith ravisankar, time: Saturday, november 15, 2025 - PM
 

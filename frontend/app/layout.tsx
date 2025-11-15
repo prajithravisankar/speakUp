@@ -20,8 +20,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-                                       children,
-                                   }: {
+   children,
+}: {
     children: React.ReactNode;
 }) {
     return (
