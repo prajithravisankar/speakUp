@@ -133,8 +133,13 @@ export function Navbar() {
 - kindly refer to [frontend/components/chat-navbar.tsx](frontend/components/chat-navbar.tsx), and all the folders and files inside app > app to check how our special chat navigator bar is setup.
 - testing screenshots: ![img.png](sample_images_for_documentation/chat_navbar_once_logged_in.png)
 
+### basic style change for nav bar
+
+- testing: ![img.png](chat_nav_bar_style_change_testing.png)
+
+### Home page setup
+
+- 
+
 > end: prajith ravisankar, time: Saturday, november 15, 2025 - PM
-
-# Backend
-
 ---
