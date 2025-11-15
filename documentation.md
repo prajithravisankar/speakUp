@@ -86,10 +86,50 @@ export default function SignUpPage() {
   - cd ~/speakUp/frontend/app/auth/signup and ran npm run dev and it is showing the rendered page - cool : ![rendered_page_signup](./documentation_images/rendered_page_signup_form.png)
 
 - setup login page, just modified some fields from signup page.
-  - tested: ![rendered_page_login](image.png)
+  - tested: ![rendered_page_login](documentation_images/image.png)
 
-# Backend
+### navigation bar setup
+
+```typescript
+// --------------------------
+// NAVBAR COMPONENT
+// File: components/navbar.tsx
+// --------------------------
+
+"use client";
+
+import Link from "next/link";
+import { ModeToggle } from "@/components/mode-toggle";
+
+export function Navbar() {
+    return (
+        <nav className="w-full border-b bg-background">
+            <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-3">
+
+                {/* Logo */}
+                <Link href="/" className="text-xl font-bold">
+                    SpeakUp
+                </Link>
+
+                {/* Navigation Links */}
+                <div className="flex items-center gap-6 text-sm">
+                    <Link href="/auth/login">Sign In</Link>
+                    <Link href="/auth/signup">Sign Up</Link>
+
+                    {/* Dark/Light Mode Toggle */}
+                    <ModeToggle />
+                </div>
+
+            </div>
+        </nav>
+    );
+}
+```
+
+- testing: ![img.png](navbar_test_initial.png)
 
 > end: prajith ravisankar, time: Saturday, november 15, 2025 - PM
+
+# Backend
 
 ---
