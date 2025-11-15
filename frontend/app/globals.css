@@ -121,6 +121,77 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Extra color themes (used by next-themes via class on <html>) */
+
+html.ocean {
+    --background: oklch(0.98 0.03 220);
+    --foreground: oklch(0.18 0.03 220);
+    --card: var(--background);
+    --card-foreground: var(--foreground);
+    --primary: oklch(0.6 0.12 230);
+    --primary-foreground: oklch(0.98 0.02 220);
+    --accent: oklch(0.9 0.08 230);
+    --accent-foreground: var(--foreground);
+    --ring: oklch(0.7 0.08 230);
+}
+
+html.forest {
+    --background: oklch(0.98 0.04 150);
+    --foreground: oklch(0.18 0.04 150);
+    --card: var(--background);
+    --card-foreground: var(--foreground);
+    --primary: oklch(0.6 0.12 150);
+    --primary-foreground: oklch(0.98 0.02 150);
+    --accent: oklch(0.9 0.06 150);
+    --accent-foreground: var(--foreground);
+    --ring: oklch(0.7 0.08 150);
+}
+
+html.sunset {
+    --background: oklch(0.99 0.05 60);
+    --foreground: oklch(0.2 0.05 40);
+    --card: var(--background);
+    --card-foreground: var(--foreground);
+    --primary: oklch(0.7 0.18 50);
+    --primary-foreground: oklch(0.99 0.03 90);
+    --accent: oklch(0.92 0.12 50);
+    --accent-foreground: var(--foreground);
+    --ring: oklch(0.75 0.16 50);
+}
+
+html.midnight {
+    --background: oklch(0.18 0.03 260);
+    --foreground: oklch(0.97 0.02 260);
+
+    --card: oklch(0.22 0.04 260);
+    --card-foreground: var(--foreground);
+
+    --primary: oklch(0.65 0.12 260);
+    --primary-foreground: oklch(0.1 0.02 260);
+
+    --accent: oklch(0.32 0.05 260);
+    --accent-foreground: var(--foreground);
+
+    --ring: oklch(0.6 0.1 260);
+
+    /* NEW: darker muted background + light text, so agent bubble is readable */
+    --muted: oklch(0.24 0.03 260);
+    --muted-foreground: oklch(0.9 0.02 260);
+}
+
+html.pastel {
+    --background: oklch(0.99 0.04 320);
+    --foreground: oklch(0.2 0.03 320);
+    --card: var(--background);
+    --card-foreground: var(--foreground);
+    --primary: oklch(0.8 0.13 320);
+    --primary-foreground: oklch(0.13 0.03 320);
+    --accent: oklch(0.95 0.08 320);
+    --accent-foreground: var(--foreground);
+    --ring: oklch(0.78 0.1 320);
+}
+
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

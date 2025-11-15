@@ -2,6 +2,10 @@
 
 # Frontend
 
+I am not used to frontend, I have experience with react. So all the things in the frontend are done by AI. I am building the backend on my own. 
+I have to give credits to gemini-ai for helping me build the frontend, and chatgpt for helping me with some code snippets.
+- prajith ravisankar. 
+
 ### set up the front end
 
 - going with next js and shadcn for the frontend
@@ -141,5 +145,5 @@ export function Navbar() {
 
 - 
 
-> end: prajith ravisankar, time: Saturday, november 15, 2025 - PM
+> end: prajith ravisankar, time: Saturday, november 15, 2025 - 5:28 PM
 ---

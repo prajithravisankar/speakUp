@@ -1,34 +1,46 @@
+// ---------------------------
+// THEME DROPDOWN
+// File: components/mode-toggle.tsx
+// ---------------------------
+
 "use client";
 
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+
+const themeOptions = [
+    { id: "light", label: "Light" },
+    { id: "dark", label: "Dark" },
+    { id: "ocean", label: "Ocean blue" },
+    { id: "forest", label: "Forest green" },
+    { id: "sunset", label: "Sunset" },
+    { id: "midnight", label: "Midnight" },
+    { id: "pastel", label: "Pastel" },
+];
 
 export function ModeToggle() {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
-    // Make sure component is mounted before reading theme
+    // avoid hydration mismatch
     useEffect(() => {
         setMounted(true);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
     }, []);
 
-    if (!mounted) {
-        return (
-            <Button variant="outline" size="sm">
-                {/* placeholder so SSR and client match */}
-                <span className="opacity-0">🌙</span>
-            </Button>
-        );
-    }
+    if (!mounted) return null;
 
     return (
-        <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        <select
+            className="border bg-background text-sm rounded-md px-2 py-1"
+            value={theme ?? "light"}
+            onChange={(e) => setTheme(e.target.value)}
         >
-            {theme === "light" ? "🌙" : "☀️"}
-        </Button>
+            {themeOptions.map((opt) => (
+                <option key={opt.id} value={opt.id}>
+                    {opt.label}
+                </option>
+            ))}
+        </select>
     );
 }
