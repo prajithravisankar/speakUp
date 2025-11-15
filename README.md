@@ -1,1 +1,1 @@
-"submission for technica 2025"
+Please refer to Docuementation.md for detailed development process for this hackathon. [documentation.md](./documentation.md)
