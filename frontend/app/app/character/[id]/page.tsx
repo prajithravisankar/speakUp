@@ -23,9 +23,12 @@ async function getCharacter(id: string): Promise<Character | null> {
   if (!id) return null;
 
   try {
-    const response = await fetch(`http://localhost:3001/api/characters/${id}`, {
-      cache: "no-store",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/characters/${id}`,
+      {
+        cache: "no-store",
+      }
+    );
 
     if (!response.ok) {
       return null;

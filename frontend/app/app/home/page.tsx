@@ -35,7 +35,9 @@ export default function HomePage() {
     const fetchCharacters = async () => {
       try {
         // Fetch data from our backend API endpoint.
-        const response = await fetch("http://localhost:3001/api/characters");
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/characters`
+        );
         const data = await response.json();
 
         if (data.success) {
