@@ -1,8 +1,11 @@
+// frontend/app/layout.tsx
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -16,22 +19,25 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
     title: "speakUp",
-    description: "AI-powered ESL practice app for underrepresented language learners.",
+    description:
+        "AI-powered ESL practice app for underrepresented language learners.",
 };
 
 export default function RootLayout({
-   children,
-}: {
+                                       children,
+                                   }: {
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en" suppressHydrationWarning>
-        <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ThemeProvider attribute="class" defaultTheme="light">
-            <Navbar />
-            <main className="pt-4">{children}</main>
-        </ThemeProvider>
-        </body>
-        </html>
+        <ClerkProvider>
+            <html lang="en" suppressHydrationWarning>
+            <body className={`${geistSans.variable} ${geistMono.variable}`}>
+            <ThemeProvider attribute="class" defaultTheme="light">
+                <Navbar />
+                <main className="pt-4">{children}</main>
+            </ThemeProvider>
+            </body>
+            </html>
+        </ClerkProvider>
     );
 }

@@ -1,12 +1,14 @@
-// --------------------------
-// NAVBAR COMPONENT
-// File: components/navbar.tsx
-// --------------------------
-
 "use client";
 
 import Link from "next/link";
 import { ModeToggle } from "@/components/mode-toggle";
+import {
+    SignedIn,
+    SignedOut,
+    SignInButton,
+    SignUpButton,
+    UserButton,
+} from "@clerk/nextjs";
 
 export function Navbar() {
     return (
@@ -18,15 +20,29 @@ export function Navbar() {
                     SpeakUp
                 </Link>
 
-                {/* Navigation Links */}
+                {/* Right side */}
                 <div className="flex items-center gap-6 text-sm">
-                    <Link href="/auth/login">Sign In</Link>
-                    <Link href="/auth/signup">Sign Up</Link>
 
-                    {/* Dark/Light Mode Toggle */}
+                    {/* When signed OUT */}
+                    <SignedOut>
+                        <SignInButton mode="modal">
+                            <button className="hover:underline">Sign In</button>
+                        </SignInButton>
+
+                        <SignUpButton mode="modal">
+                            <button className="hover:underline">Sign Up</button>
+                        </SignUpButton>
+                    </SignedOut>
+
+                    {/* When signed IN */}
+                    <SignedIn>
+                        {/* Clerk User Menu */}
+                        <UserButton afterSignOutUrl="/" />
+                    </SignedIn>
+
+                    {/* Theme selector is always visible */}
                     <ModeToggle />
                 </div>
-
             </div>
         </nav>
     );
