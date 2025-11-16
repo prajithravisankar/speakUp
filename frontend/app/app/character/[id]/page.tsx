@@ -92,7 +92,7 @@ export default async function CharacterPage({
       </section>
 
       {/* MIDDLE: chat component */}
-      <CharacterChat characterName={character.name} />
+      <CharacterChat character={character} />
     </div>
   );
 }

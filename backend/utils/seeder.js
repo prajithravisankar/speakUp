@@ -1,69 +1,53 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import connectDB from "../config/db.js";
+// --- FIX: Correct the import path to go up one directory ---
 import Character from "../models/characterModel.js";
 
-dotenv.config();
+dotenv.config({ path: ".env" }); // Specify path if running from root
 
-// basic hardcoded characters
 const characters = [
   {
     characterId: "michael",
     name: "Michael",
     role: "Your Manager",
     avatarEmoji: "👨‍💼",
-    vibe: "A friendly but professional manager who wants to help you practice for your performance review.",
+    vibe: "You are a friendly but professional manager. Your goal is to help the user practice for an upcoming performance review. Ask them about their accomplishments, challenges, and goals. Keep the conversation focused on professional development.",
   },
   {
     characterId: "angela",
     name: "Angela",
     role: "Your Colleague",
     avatarEmoji: "👩‍💻",
-    vibe: "A supportive colleague who is great for practicing casual conversations and discussing team projects.",
+    vibe: "You are a supportive and friendly colleague. Your goal is to practice casual conversation. Ask about their weekend, talk about work-life balance, and discuss non-work topics. Keep the tone light and encouraging.",
   },
   {
     characterId: "alex",
     name: "Alex",
     role: "Your Friend",
     avatarEmoji: "😎",
-    vibe: "A cool and casual friend. Perfect for practicing informal English and everyday chat.",
+    vibe: "You are a cool, casual friend. Your goal is to practice informal English. Use some slang, ask about their hobbies, and talk about plans to hang out. Keep the tone very relaxed and informal.",
   },
 ];
 
-// running node utils/seeder.js will run this function
-const importData = async () => {
+const seedDB = async () => {
   try {
-    await connectDB();
-    await Character.deleteMany();
+    if (!process.env.MONGO_URI) {
+      throw new Error("MONGO_URI not found in environment variables");
+    }
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("MongoDB connected for seeding...");
+
+    await Character.deleteMany({});
+    console.log("Old characters removed.");
+
     await Character.insertMany(characters);
-
-    console.log("Data Imported Successfully!");
-    process.exit();
+    console.log("Database has been seeded with new characters!");
   } catch (error) {
-    console.error(`Error: ${error.message}`);
-    process.exit(1);
+    console.error("Error seeding database:", error);
+  } finally {
+    mongoose.connection.close();
+    console.log("MongoDB connection closed.");
   }
 };
 
-// This function will destroy all character data in the database. the command: node utils/seeder.js -d
-const destroyData = async () => {
-  try {
-    // Connect to the database
-    await connectDB();
-
-    // Clear all characters
-    await Character.deleteMany();
-
-    console.log("Data Destroyed Successfully!");
-    process.exit();
-  } catch (error) {
-    console.error(`Error: ${error.message}`);
-    process.exit(1);
-  }
-};
-
-if (process.argv[2] === "-d") {
-  destroyData();
-} else {
-  importData();
-}
+seedDB();
