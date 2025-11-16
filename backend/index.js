@@ -5,6 +5,7 @@ dotenv.config();
 
 import connectDB from "./config/db.js";
 import characterRoutes from "./routes/characters.js";
+import userRoutes from "./routes/userRoutes.js";
 
 // --- Connect to the database ---
 await connectDB();
@@ -18,6 +19,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/characters", characterRoutes);
+app.use("/api/me", userRoutes); // Any request to '/api/me' will be handled by our user router, which is protected by the middleware.
 
 app.listen(PORT, () => {
   // Now the server only starts listening after the DB is connected.
