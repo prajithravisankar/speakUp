@@ -2,7 +2,15 @@
 // Simple Home Page
 // File: app/app/home/page.tsx
 // -------------------------------------
+
+// ==== testing =====
+
 "use client";
+
+import { useSession } from "@clerk/nextjs";
+import { useEffect } from "react";
+
+// ==== testing =====
 
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
@@ -13,10 +21,6 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
-// TESTING POSTMAN
-import { useSession } from "@clerk/nextjs";
-import { useEffect } from "react";
 
 const characters = [
   {

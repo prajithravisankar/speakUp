@@ -1,1 +1,1 @@
-Please refer to Docuementation.md for detailed development process for this hackathon. [documentation.md](frontend/documentation.md)
+Submission for MLH Technica 2025
