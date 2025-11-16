@@ -7,91 +7,92 @@ import { MessageCircle, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CharacterChat } from "@/components/character-chat";
 
-type CharacterConfig = {
-    id: string;
-    name: string;
-    role: string;
-    vibe: string;
-};
+// Define a TypeScript interface for our Character object
+interface Character {
+  _id: string;
+  characterId: string;
+  name: string;
+  role: string;
+  avatarEmoji: string;
+  vibe: string;
+}
 
-const characterConfigs: Record<string, CharacterConfig> = {
-    michael: {
-        id: "michael",
-        name: "Michael",
-        role: "Coworker",
-        vibe: "Semi-formal, supportive, professional small talk.",
-    },
-    angela: {
-        id: "angela",
-        name: "Angela",
-        role: "College friend",
-        vibe: "Casual, warm, emoji-friendly.",
-    },
-    alex: {
-        id: "alex",
-        name: "Alex",
-        role: "High school ex",
-        vibe: "A bit emotional, reflective, sometimes awkward.",
-    },
-};
+// This async function fetches the specific character's data from the backend.
+async function getCharacter(id: string): Promise<Character | null> {
+  // If id is not provided, don't even try to fetch.
+  if (!id) return null;
 
-// Next 16: params is a Promise
-export default async function CharacterPage({
-                                                params,
-                                            }: {
-    params: Promise<{ id: string }>;
-}) {
-    const resolved = await params;
-    const id = resolved.id.toLowerCase();
-    const character = characterConfigs[id];
+  try {
+    const response = await fetch(`http://localhost:3001/api/characters/${id}`, {
+      cache: "no-store",
+    });
 
-    if (!character) {
-        return (
-            <div className="max-w-3xl mx-auto px-4 py-6">
-                <p className="text-lg font-medium mb-2">Character not found.</p>
-                <p className="text-sm text-muted-foreground">
-                    This character doesn&apos;t exist yet. Try Michael, Angela, or Alex.
-                </p>
-            </div>
-        );
+    if (!response.ok) {
+      return null;
     }
 
+    const result = await response.json();
+    return result.success ? result.data : null;
+  } catch (error) {
+    console.error("Failed to fetch character:", error);
+    return null;
+  }
+}
+
+// This is a Server Component that fetches data before rendering.
+export default async function CharacterPage({
+  params,
+}: {
+  // The parameter name 'id' must match the folder name '[id]'
+  params: { id: string };
+}) {
+  // Use params.id to get the character's ID from the URL
+  const resolvedParams = await params;
+  const character = await getCharacter(resolvedParams.id);
+
+  if (!character) {
     return (
-        <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
-            {/* TOP: simple header */}
-            <section className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div className="flex items-center gap-4">
-                    {/* Avatar */}
-                    <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-semibold">
-                        {character.name.substring(0, 1)}
-                    </div>
-
-                    <div>
-                        <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                            {character.role}
-                        </p>
-                        <h1 className="text-2xl font-semibold">{character.name}</h1>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            {character.vibe}
-                        </p>
-                    </div>
-                </div>
-
-                {/* Buttons – visual only */}
-                <div className="flex gap-2">
-                    <Button type="button">
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        Text chat
-                    </Button>
-                    <Button type="button" variant="outline">
-                        <PhoneCall className="w-4 h-4 mr-2" />
-                        Voice chat
-                    </Button>
-                </div>
-            </section>
-
-            {/* MIDDLE: chat only */}
-            <CharacterChat characterName={character.name} />
-        </div>
+      <div className="max-w-3xl mx-auto px-4 py-6">
+        <p className="text-lg font-medium mb-2">Character not found.</p>
+        <p className="text-sm text-muted-foreground">
+          This character could not be loaded from the backend.
+        </p>
+      </div>
     );
+  }
+
+  return (
+    <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
+      {/* TOP: simple header, now using data from the backend */}
+      <section className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-semibold">
+            {character.avatarEmoji}
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">
+              {character.role}
+            </p>
+            <h1 className="text-2xl font-semibold">{character.name}</h1>
+            <p className="text-xs text-muted-foreground mt-1">
+              {character.vibe}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Button type="button">
+            <MessageCircle className="w-4 h-4 mr-2" />
+            Text chat
+          </Button>
+          <Button type="button" variant="outline">
+            <PhoneCall className="w-4 h-4 mr-2" />
+            Voice chat
+          </Button>
+        </div>
+      </section>
+
+      {/* MIDDLE: chat component */}
+      <CharacterChat characterName={character.name} />
+    </div>
+  );
 }

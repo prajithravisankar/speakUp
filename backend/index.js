@@ -3,10 +3,7 @@ import dotenv from "dotenv";
 // Make sure to call config() at the top
 dotenv.config();
 
-console.log(
-  "Gemini API Key (first 10 chars):",
-  process.env.GEMINI_API_KEY?.slice(0, 10)
-);
+import cors from "cors";
 
 import connectDB from "./config/db.js";
 import characterRoutes from "./routes/characters.js";
@@ -17,6 +14,12 @@ import chatRoutes from "./routes/chatRoutes.js";
 await connectDB();
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Allow requests only from your frontend origin
+  })
+);
 
 app.use(express.json());
 
