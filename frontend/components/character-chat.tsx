@@ -26,18 +26,56 @@ export function CharacterChat({ character }: { character: Character }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [sessionId, setSessionId] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false); // To show a loading state
+  const [isLoading, setIsLoading] = useState(false);
+  const [conversationEnded, setConversationEnded] = useState(false);
+
+  const MAX_USER_MESSAGES = 10; // Match the backend limit // To show a loading state
 
   // Generate a unique session ID when the component mounts
   useEffect(() => {
-    setSessionId(`session_${Date.now()}`);
-  }, []);
+    const newSessionId = `session_${Date.now()}`;
+    setSessionId(newSessionId);
+
+    // Call the start endpoint to get the AI's opening message
+    const startConversation = async () => {
+      try {
+        const token = await getToken();
+        const response = await fetch(
+          `http://localhost:3001/api/chat/${character.characterId}/start`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ sessionId: newSessionId }),
+          }
+        );
+
+        const result = await response.json();
+        if (result.success) {
+          setMessages([result.data]);
+        }
+      } catch (error) {
+        console.error("Failed to start conversation:", error);
+      }
+    };
+
+    startConversation();
+  }, [character.characterId, getToken]);
 
   // This function now handles the entire API call process
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
     const text = input.trim();
-    if (!text || isLoading) return;
+    if (!text || isLoading || conversationEnded) return;
+
+    // Check if we've reached the limit
+    const userMessageCount = messages.filter((m) => m.role === "user").length;
+    if (userMessageCount >= MAX_USER_MESSAGES) {
+      setConversationEnded(true);
+      return;
+    }
 
     setIsLoading(true);
     const userMessage: Message = {
@@ -75,6 +113,11 @@ export function CharacterChat({ character }: { character: Character }) {
       if (result.success) {
         // Add the AI's response to the message list
         setMessages((prev) => [...prev, result.data]);
+
+        // Check if this was the last exchange
+        if (userMessageCount + 1 >= MAX_USER_MESSAGES) {
+          setConversationEnded(true);
+        }
       } else {
         console.error("API Error:", result.error);
         // Optional: Show an error message in the chat
@@ -134,17 +177,24 @@ export function CharacterChat({ character }: { character: Character }) {
         </div>
 
         {/* input area */}
-        <form onSubmit={handleSend} className="flex gap-2 shrink-0">
-          <Input
-            placeholder={`Type a message to ${character.name}...`}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            disabled={isLoading}
-          />
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Sending..." : "Send"}
-          </Button>
-        </form>
+        {conversationEnded ? (
+          <div className="text-center py-4 text-sm text-muted-foreground">
+            Practice session complete! You can now review this conversation for
+            learning.
+          </div>
+        ) : (
+          <form onSubmit={handleSend} className="flex gap-2 shrink-0">
+            <Input
+              placeholder={`Type a message to ${character.name}...`}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              disabled={isLoading}
+            />
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Sending..." : "Send"}
+            </Button>
+          </form>
+        )}
       </CardContent>
     </Card>
   );

@@ -90,25 +90,40 @@ router.post("/:characterId/message", protect, async (req, res) => {
       parts: [{ text: msg.content }],
     }));
 
-    // 8. Create the chat session (using the correct method from your docs)
+    // 8. Count the number of back-and-forth exchanges
+    const userMessageCount = history.filter(
+      (msg) => msg.role === "user"
+    ).length;
+    const MAX_EXCHANGES = 10; // Practice session ends after 10 exchanges
+    const isNearEnd = userMessageCount >= MAX_EXCHANGES - 2;
+    const isEndOfConversation = userMessageCount >= MAX_EXCHANGES;
+
+    // 9. Create the chat session with dynamic instructions
     const chat = ai.chats.create({
-      model: "gemini-2.5-flash", // Use the model you want
+      model: "gemini-2.5-flash",
       history: chatHistoryForAI,
-      systemInstruction: `IMPORTANT: You MUST roleplay as ${character.name}. Never break character.
+      systemInstruction: `You are ${character.name}. ${character.role}. ${
+        character.vibe
+      }
 
-Character Profile:
-- Name: ${character.name}
-- Role: ${character.role}  
-- Personality & Behavior: ${character.vibe}
+STRICT RULES:
+1. Respond in 1-2 SHORT sentences ONLY (like real texting)
+2. NEVER write long paragraphs or lists
+3. Stay in character at ALL times
+4. Focus ONLY on your specific goal
+${
+  isNearEnd && !isEndOfConversation
+    ? `5. You've had a good conversation. Start wrapping up naturally in 1-2 more exchanges.`
+    : ""
+}
+${
+  isEndOfConversation
+    ? `5. IMPORTANT: This is the last exchange. Thank them warmly, summarize the conversation briefly in ONE sentence, and say goodbye. End with "Great practice session! 👋"`
+    : ""
+}
 
-CRITICAL RULES:
-1. ALWAYS stay in character as ${character.name}
-2. NEVER provide generic help or act as a general AI assistant
-3. Keep responses SHORT (2-3 sentences maximum)
-4. Focus ONLY on the specific goal described in your personality
-5. If the user asks something off-topic, gently redirect them back to your role
-
-Remember: You are ${character.name}, NOT a general assistant. Act accordingly.`,
+Example good response: "Hey! How's your week going so far?"
+Example BAD response: Long paragraphs, numbered lists, generic advice.`,
     });
 
     // 9. Send the new message to Gemini
@@ -131,6 +146,71 @@ Remember: You are ${character.name}, NOT a general assistant. Act accordingly.`,
     return res.status(201).json({ success: true, data: aiMessage });
   } catch (error) {
     console.error("Error in chat message:", error);
+    return res.status(500).json({ success: false, error: "Server Error" });
+  }
+});
+
+// ============================================================
+// POST: Start a new conversation (AI sends first message)
+// ============================================================
+router.post("/:characterId/start", protect, async (req, res) => {
+  try {
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const { characterId } = req.params;
+    const { sessionId } = req.body;
+    const clerkUserId = req.userId;
+
+    if (!sessionId) {
+      return res
+        .status(400)
+        .json({ success: false, error: "sessionId is required" });
+    }
+
+    const user = await User.findOne({ userId: clerkUserId });
+    const character = await Character.findOne({ characterId: characterId });
+
+    if (!user || !character) {
+      return res
+        .status(404)
+        .json({ success: false, error: "User or Character not found" });
+    }
+
+    // Check if this session already has messages
+    const existingMessages = await Message.countDocuments({ sessionId });
+    if (existingMessages > 0) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Session already started" });
+    }
+
+    // Generate the opening message
+    const chat = ai.chats.create({
+      model: "gemini-2.5-flash",
+      history: [],
+      systemInstruction: `You are ${character.name}. ${character.role}. ${character.vibe}
+
+CRITICAL: You are starting a conversation with someone. Greet them naturally as ${character.name} would.
+Keep it to 1-2 short sentences. Be friendly and in character.`,
+    });
+
+    const response = await chat.sendMessage({
+      message: "Start the conversation by greeting the user",
+    });
+
+    const aiMessageText = response.text;
+
+    // Save the AI's opening message
+    const aiMessage = await Message.create({
+      userId: user._id,
+      characterId: character.characterId,
+      sessionId,
+      role: "model",
+      content: aiMessageText,
+    });
+
+    return res.status(201).json({ success: true, data: aiMessage });
+  } catch (error) {
+    console.error("Error starting conversation:", error);
     return res.status(500).json({ success: false, error: "Server Error" });
   }
 });

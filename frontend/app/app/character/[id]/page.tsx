@@ -66,7 +66,7 @@ export default async function CharacterPage({
       {/* TOP: simple header, now using data from the backend */}
       <section className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-semibold">
+          <div className="w-14 h-14 shrink-0 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-semibold">
             {character.avatarEmoji}
           </div>
           <div>
