@@ -1,0 +1,21 @@
+# Dependencies
+# This folder contains all the downloaded npm packages. It can be very large
+# and should be re-created by running `npm install`.
+node_modules/
+
+# Environment Variables
+# This file will store secrets like API keys and database connection strings.
+# It should NEVER be committed to version control.
+.env
+
+# Logs
+# Log files created during development or production.
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# macOS specific files
+.DS_Store
